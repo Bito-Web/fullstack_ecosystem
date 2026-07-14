@@ -68,10 +68,10 @@ http {
         server_name localhost;
 
         # Cabeceras globales de seguridad
-${customHeaders}
+        ${customHeaders}
 
         # Rutas dinámicas y estáticas declaradas
-${buildLocations()}
+        ${buildLocations()}
     }
 }
 `.trim();

@@ -4,8 +4,8 @@ node_modules/
 .pnp.js
 
 # Salida de compilación y dist
-/dist
-/build
+dist/
+build/
 *.tsbuildinfo
 
 # Archivos de entorno y secretos
