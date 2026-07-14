@@ -55,11 +55,12 @@ const FrontendSchema = z.object({
 
 // ==========================================
 // 4. BASE DE DATOS
-// ==========================================
+// ==========================================s
 const DatabaseSchema = z.object({
   engine: z.enum(['postgresql', 'mysql', 'sqlite', 'mongodb', 'sqlserver']),
   version: z.string(),
   port: z.number().int().positive().optional(),
+  password: z.string().optional().describe("Puede ser un valor directo o `${DB_PASSWORD}`"),
   schemas: z.array(z.string()).optional().describe("Rutas a archivos .sql o migraciones"),
 });
 

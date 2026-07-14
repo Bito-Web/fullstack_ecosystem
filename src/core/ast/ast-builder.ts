@@ -1,6 +1,17 @@
 // src/core/ast/ast-builder.ts
 import path from 'path';
+import fs from 'fs';
 import { FullstackManifest } from '../schema/stack.schema';
+
+// Función auxiliar para resolver ${VAR_NAME} desde el entorno
+function resolveEnvVars(value: string, projectRoot: string): string {
+  if (!value) return value;
+  
+  // Reemplaza ${NOMBRE_VAR} por process.env.NOMBRE_VAR
+  return value.replace(/\$\{([^}]+)\}/g, (_, envName) => {
+    return process.env[envName] || '';
+  });
+}
 
 export interface NormalizedRoute {
   path: string;
@@ -45,8 +56,14 @@ export interface UnifiedAST {
 
 export class ASTBuilder {
   public static build(manifest: FullstackManifest, projectRoot: string): UnifiedAST {
-    // 1. Normalizar y clasificar las rutas por Método HTTP
-    const normalizeRouteList = (routes: typeof manifest.server.routes.get = []): NormalizedRoute[] => {
+    
+    // Mapear envVars resolviendo expresiones ${VAR}
+    const resolvedEnvVars: Record<string, string> = {};
+    Object.entries(manifest.backend.envVars).forEach(([key, val]) => {
+      resolvedEnvVars[key] = resolveEnvVars(val, projectRoot);
+    });
+
+    const normalizeRouteList = (routes: typeof manifest.server.routes.get = []) => {
       return routes.map((r) => {
         const isInclude = r.handler.startsWith('include(');
         const target = isInclude
@@ -55,15 +72,14 @@ export class ASTBuilder {
 
         return {
           path: r.path,
-          type: isInclude ? 'include' : 'backend',
+          type: isInclude ? 'include' as const : 'backend' as const,
           target,
           protected: r.protected ?? false,
         };
       });
     };
 
-    // 2. Construir árbol AST inmutable
-    const ast: UnifiedAST = {
+    return {
       projectName: manifest.name,
       version: manifest.version,
       server: {
@@ -83,7 +99,7 @@ export class ASTBuilder {
         version: manifest.backend.version,
         framework: manifest.backend.framework,
         entryPoint: path.resolve(projectRoot, manifest.backend.entryPoint),
-        envVars: manifest.backend.envVars,
+        envVars: resolvedEnvVars, // EnvVars interpoladas
       },
       ...(manifest.frontend && {
         frontend: {
@@ -100,7 +116,5 @@ export class ASTBuilder {
         },
       }),
     };
-
-    return ast;
   }
 }

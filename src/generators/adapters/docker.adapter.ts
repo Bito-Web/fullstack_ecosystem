@@ -8,22 +8,37 @@ export class DockerAdapter implements Adapter {
   public generate(ast: UnifiedAST): GeneratedFile[] {
     const { server, backend, database } = ast;
 
-    // 1. Configurar servicio de Backend en Compose
-    let backendService = `
+    // 1. Crear contenido del archivo .env que se escribirá en /dist
+    const envFileLines: string[] = [
+      `# Generado automáticamente para ${ast.projectName}`,
+      `PORT=3000`,
+    ];
+
+    Object.entries(backend.envVars).forEach(([k, v]) => {
+      envFileLines.push(`${k}=${v}`);
+    });
+
+    if (database) {
+      envFileLines.push(`DB_NAME=${ast.projectName}`);
+      envFileLines.push(`DB_PORT=${database.port || 5432}`);
+    }
+
+    const envContent = envFileLines.join('\n');
+
+    // 2. Configurar servicio de Backend usando env_file
+    const backendService = `
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    environment:
-${Object.entries(backend.envVars)
-  .map(([k, v]) => `      - ${k}=${v}`)
-  .join('\n') || '      - NODE_ENV=production'}
+    env_file:
+      - .env
     networks:
       - app-network`;
 
-    // 2. Configurar servicio de Servidor Web (Nginx/Apache)
+    // 3. Configurar servicio del Servidor Web
     const serverService = `
   server:
     image: ${server.engine}:${server.version || 'latest'}
@@ -37,7 +52,7 @@ ${server.ports.map((p) => `      - "${p}:${p}"`).join('\n')}
     networks:
       - app-network`;
 
-    // 3. Configurar Servicio de Base de Datos si está declarada en el YAML
+    // 4. Configurar Base de Datos con envVars
     let databaseService = '';
     if (database) {
       databaseService = `
@@ -45,14 +60,12 @@ ${server.ports.map((p) => `      - "${p}:${p}"`).join('\n')}
     image: ${database.engine}:${database.version || 'latest'}
     ports:
       - "${database.port || 5432}:${database.port || 5432}"
-    environment:
-      - POSTGRES_DB=${ast.projectName}
-      - POSTGRES_PASSWORD=secret
+    env_file:
+      - .env
     networks:
       - app-network`;
     }
 
-    // 4. Armar el docker-compose.yml final
     const composeContent = `
 # Generado automáticamente por Mystack CLI
 version: '3.8'
@@ -67,7 +80,6 @@ networks:
     driver: bridge
 `.trim();
 
-    // 5. Generar Dockerfile básico para el backend de Node.js
     const backendDockerfile = `
 FROM node:20-alpine
 WORKDIR /app
@@ -79,6 +91,10 @@ CMD ["node", "server.js"]
 `.trim();
 
     return [
+      {
+        relativePath: '.env',
+        content: envContent,
+      },
       {
         relativePath: 'docker-compose.yml',
         content: composeContent,
