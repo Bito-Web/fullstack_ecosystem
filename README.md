@@ -186,7 +186,7 @@ npm run dev
 
 ```bash
 # Clonar el repositorio
-git clone [https://github.com/tu-usuario/fullstack_ecosystem.git](https://github.com/tu-usuario/fullstack_ecosystem.git)
+git clone [https://github.com/Bito-Web/fullstack_ecosystem.git](https://github.com/Bito-Web/fullstack_ecosystem.git)
 
 # Instalar dependencias
 npm install
