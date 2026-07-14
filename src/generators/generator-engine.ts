@@ -5,7 +5,8 @@ import { UnifiedAST } from '../core/ast/ast-builder';
 import { Adapter } from './adapters/base.adapter';
 import { NginxAdapter } from './adapters/nginx.adapter';
 import { ExpressAdapter } from './adapters/express.adapter';
-import { DockerAdapter } from './adapters/docker.adapter'; // <--- Importar
+import { DockerAdapter } from './adapters/docker.adapter';
+import { FrontendAdapter } from './adapters/frontend.adapter'; // <--- Importar
 
 export class GeneratorEngine {
   private adapters: Adapter[] = [];
@@ -13,7 +14,8 @@ export class GeneratorEngine {
   constructor() {
     this.adapters.push(new NginxAdapter());
     this.adapters.push(new ExpressAdapter());
-    this.adapters.push(new DockerAdapter()); // <--- Registrar
+    this.adapters.push(new DockerAdapter());
+    this.adapters.push(new FrontendAdapter()); // <--- Registrar
   }
 
   public run(ast: UnifiedAST, outputDir: string): void {

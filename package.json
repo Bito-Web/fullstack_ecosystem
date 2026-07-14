@@ -9,6 +9,7 @@
   "scripts": {
     "build:cli": "tsc",
     "mystack": "ts-node bin/mystack.ts",
+    "init": "ts-node bin/mystack.ts init",
     "validate": "ts-node bin/mystack.ts validate examples/app.yaml",
     "build": "ts-node bin/mystack.ts build examples/app.yaml",
     "dev": "ts-node bin/mystack.ts dev examples/app.yaml"

@@ -1,4 +1,5 @@
-name: mi-app-fullstack
+# Manifiesto Fullstack generado automáticamente por Mystack CLI
+name: Prueba
 version: 1.0.0
 
 server:
@@ -7,6 +8,7 @@ server:
   ports: [80, 443]
   headers:
     Referrer-Policy: strict-origin
+    X-Frame-Options: DENY
   routes:
     get:
       - path: /
@@ -36,3 +38,5 @@ database:
   engine: postgresql
   version: "16.0"
   port: 5432
+  schemas:
+    - ./database/init.sql

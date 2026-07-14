@@ -8,37 +8,75 @@ export class ExpressAdapter implements Adapter {
   public generate(ast: UnifiedAST): GeneratedFile[] {
     const { backend, server } = ast;
 
-    // Solo se ejecuta si el backend usa JavaScript o TypeScript
+    // Solo aplica para proyectos que utilicen Node.js (JavaScript / TypeScript)
     if (backend.language !== 'javascript' && backend.language !== 'typescript') {
       return [];
     }
 
-    // 1. Mapear handlers desde el AST para las rutas de Backend
+    // 1. Plantilla para el Middleware de Autenticación
+    const authMiddlewareCode = `
+// Middleware de Autenticación auto-generado por Mystack CLI
+const authMiddleware = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  
+  if (!authHeader) {
+    return res.status(401).json({ 
+      error: 'Acceso no autorizado: Se requiere la cabecera "Authorization"' 
+    });
+  }
+
+  // Ejemplo básico: Bearer token validation
+  const token = authHeader.split(' ')[1];
+  if (!token || token !== process.env.AUTH_SECRET) {
+    return res.status(403).json({ 
+      error: 'Acceso prohibido: Token inválido o expirado' 
+    });
+  }
+
+  next();
+};
+`.trim();
+
+    // 2. Mapeo de handlers inyectando el middleware en rutas protegidas
     const buildRouteHandlers = () => {
       const handlers: string[] = [];
 
-      // Procesar rutas GET asociadas al backend
+      // Procesar rutas GET
       server.routes.GET.filter((r) => r.type === 'backend').forEach((route) => {
+        const middleware = route.protected ? 'authMiddleware, ' : '';
+        const protectionNotice = route.protected ? '🔒 [PROTEGIDA]' : '🔓 [PÚBLICA]';
+
         handlers.push(`
-app.get('${route.path}', (req, res) => {
-  // Handler auto-generado para: ${route.target}
-  res.json({ message: 'Respuesta de GET ${route.path}', target: '${route.target}' });
+// Ruta ${protectionNotice}: GET ${route.path}
+app.get('${route.path}', ${middleware}(req, res) => {
+  res.json({ 
+    message: 'Respuesta de GET ${route.path}', 
+    target: '${route.target}',
+    protected: ${route.protected} 
+  });
 });`);
       });
 
-      // Procesar rutas POST asociadas al backend
+      // Procesar rutas POST
       server.routes.POST.filter((r) => r.type === 'backend').forEach((route) => {
+        const middleware = route.protected ? 'authMiddleware, ' : '';
+        const protectionNotice = route.protected ? '🔒 [PROTEGIDA]' : '🔓 [PÚBLICA]';
+
         handlers.push(`
-app.post('${route.path}', (req, res) => {
-  // Handler auto-generado para: ${route.target}
-  res.json({ message: 'Respuesta de POST ${route.path}', target: '${route.target}' });
+// Ruta ${protectionNotice}: POST ${route.path}
+app.post('${route.path}', ${middleware}(req, res) => {
+  res.json({ 
+    message: 'Respuesta de POST ${route.path}', 
+    target: '${route.target}',
+    protected: ${route.protected} 
+  });
 });`);
       });
 
       return handlers.join('\n');
     };
 
-    // 2. Contenido del Servidor Express
+    // 3. Generar el código principal del servidor Express
     const serverJsContent = `
 // Generado automáticamente por Mystack CLI
 const express = require('express');
@@ -46,21 +84,24 @@ const app = express();
 
 app.use(express.json());
 
-// Variables de entorno inyectadas
+// Inyección de Variables de Entorno por defecto
+process.env.AUTH_SECRET = process.env.AUTH_SECRET || 'super-secret-token';
 ${Object.entries(backend.envVars)
   .map(([k, v]) => `process.env.${k} = process.env.${k} || '${v}';`)
   .join('\n')}
 
-// Rutas declaradas en el manifiesto
+${authMiddlewareCode}
+
+// Rutas mapeadas desde el manifiesto
 ${buildRouteHandlers()}
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(\`🚀 Backend Express corriendo en http://localhost:\${PORT}\`);
+  console.log(\`🚀 Backend Express ejecutándose en http://localhost:\${PORT}\`);
 });
 `.trim();
 
-    // 3. package.json independiente para el backend
+    // 4. package.json independiente
     const packageJsonContent = JSON.stringify(
       {
         name: `${ast.projectName}-backend`,
