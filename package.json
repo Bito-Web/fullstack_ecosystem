@@ -10,9 +10,9 @@
     "build:cli": "tsc",
     "mystack": "ts-node bin/mystack.ts",
     "init": "ts-node bin/mystack.ts init",
-    "validate": "ts-node bin/mystack.ts validate examples/app.yaml",
-    "build": "ts-node bin/mystack.ts build examples/app.yaml",
-    "dev": "ts-node bin/mystack.ts dev examples/app.yaml"
+    "validate": "ts-node bin/mystack.ts validate app.yaml",
+    "build": "ts-node bin/mystack.ts build app.yaml",
+    "dev": "ts-node bin/mystack.ts dev app.yaml"
   },
   "keywords": [
     "cli",
