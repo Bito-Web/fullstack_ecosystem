@@ -1,0 +1,34 @@
+{
+  "name": "fullstack-ecosystem",
+  "version": "0.1.0",
+  "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
+  "main": "dist/src/cli/index.js",
+  "bin": {
+    "mystack": "./bin/mystack.ts"
+  },
+  "scripts": {
+    "build:cli": "tsc",
+    "mystack": "ts-node bin/mystack.ts",
+    "validate": "ts-node bin/mystack.ts validate examples/app.yaml",
+    "build": "ts-node bin/mystack.ts build examples/app.yaml",
+    "dev": "ts-node bin/mystack.ts dev examples/app.yaml"
+  },
+  "keywords": [
+    "cli",
+    "fullstack",
+    "orchestrator",
+    "yaml"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "yaml": "^2.4.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

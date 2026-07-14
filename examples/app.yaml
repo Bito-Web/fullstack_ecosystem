@@ -1,0 +1,39 @@
+name: mi-app-fullstack
+version: 1.0.0
+
+server:
+  engine: nginx
+  version: "1.24"
+  ports: [80, 443]
+  headers:
+    Referrer-Policy: strict-origin
+    X-Frame-Options: DENY
+  routes:
+    get:
+      - path: /
+        handler: include(front/home.html)
+      - path: /api/v1/users
+        handler: backend.getUsers
+    post:
+      - path: /api/v1/users
+        handler: backend.createUser
+        protected: true
+
+backend:
+  language: typescript
+  version: "5.0"
+  framework: express
+  entryPoint: src/server.ts
+  envVars:
+    NODE_ENV: development
+
+frontend:
+  language: html
+  srcDir: ./src/frontend
+
+database:
+  engine: postgresql
+  version: "16.0"
+  port: 5432
+  schemas:
+    - ./database/init.sql
