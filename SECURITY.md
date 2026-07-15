@@ -21,7 +21,7 @@ Actualmente, solo la versión principal activa recibe parches y actualizaciones 
 
 Si descubres una vulnerabilidad de seguridad (fugas de secretos en `.env`, inyecciones de comandos en adaptadores, fallos en parsing YAML/Zod, etc.), infórmanos de manera privada siguiendo estos pasos:
 
-1. **Enviar un Correo Electrónico:** Envía un correo con los detalles del hallazgo a `security@bito-web.com` *(o tu correo de contacto de seguridad)*.
+1. **Enviar un Correo Electrónico:** Envía un correo con los detalles del hallazgo a `contact@jorgetorrelles.site` *(o tu correo de contacto de seguridad)*.
 2. **Incluir en el Reporte:**
    * Descripción detallada del tipo de vulnerabilidad.
    * Pasos claros para reproducir la falla (PoC / código de prueba).

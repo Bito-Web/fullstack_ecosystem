@@ -42,4 +42,4 @@ Este Código de Conducta se aplica tanto dentro de los espacios del proyecto com
 
 ## Aplicación
 
-Casos de abuso, acoso u otro comportamiento inaceptable pueden ser reportados contactando al equipo del proyecto en `conduct@bito-web.com`. Todas las quejas serán revisadas e investigadas de manera oportuna y justa.
+Casos de abuso, acoso u otro comportamiento inaceptable pueden ser reportados contactando al equipo del proyecto en `contact@jorgetorrelles.site`. Todas las quejas serán revisadas e investigadas de manera oportuna y justa.

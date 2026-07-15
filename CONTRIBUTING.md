@@ -34,7 +34,7 @@ Si deseas escribir código o corregir un error tú mismo, sigue estos pasos:
 ### 1. Bifurcar y Clonar el Repositorio
 ```bash
 # Forkea el repositorio en GitHub y luego clona tu fork:
-git clone [https://github.com/TU_USUARIO/fullstack_ecosystem.git](https://github.com/TU_USUARIO/fullstack_ecosystem.git)
+git clone [https://github.com/Bito-Web/fullstack_ecosystem.git](https://github.com/Bito-Web/fullstack_ecosystem.git)
 cd fullstack_ecosystem
 
 ```
