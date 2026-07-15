@@ -1,4 +1,6 @@
 // src/generators/adapters/docker.adapter.ts
+import fs from 'fs';
+import path from 'path';
 import { Adapter, GeneratedFile } from './base.adapter';
 import { UnifiedAST } from '../../core/ast/ast-builder';
 
@@ -13,15 +15,25 @@ export class DockerAdapter implements Adapter {
       `PORT=3000`,
     ];
 
+    // Inyectar variables del backend
     Object.entries(backend.envVars).forEach(([k, v]) => {
       envFileLines.push(`${k}=${v}`);
     });
 
+    // Inyectar variables de la Base de Datos al .env ANTES de generar envContent
     if (database) {
-      envFileLines.push(`DB_NAME=${ast.projectName}`);
+      envFileLines.push(`DB_NAME=${ast.projectName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`);
       envFileLines.push(`DB_PORT=${database.port || 5432}`);
+      
+      const dbEngine = database.engine.toLowerCase() === 'postgresql' ? 'postgres' : database.engine;
+      if (dbEngine === 'postgres') {
+        envFileLines.push(`POSTGRES_PASSWORD=postgres_secure_pass`);
+        envFileLines.push(`POSTGRES_USER=postgres`);
+        envFileLines.push(`POSTGRES_DB=${ast.projectName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`);
+      }
     }
 
+    // Ahora sí unimos todas las líneas del .env
     const envContent = envFileLines.join('\n');
 
     // 1. Servicio de Backend
@@ -37,9 +49,12 @@ export class DockerAdapter implements Adapter {
     networks:
       - app-network`;
 
-    // 2. Comprobar si el Frontend requiere un contenedor dinámico (React, Vue, Vite, etc.)
+    // 2. Comprobar si el Frontend requiere un contenedor dinámico
+    const fullFrontendPath = frontend ? path.resolve(process.cwd(), frontend.srcDir) : '';
+    const hasDockerfile = frontend && fs.existsSync(path.join(fullFrontendPath, 'Dockerfile'));
+    
     const requiresFrontendContainer = frontend && 
-      ['jsx', 'tsx', 'vue', 'react'].includes((frontend.language || '').toLowerCase());
+      (['jsx', 'tsx', 'vue', 'react'].includes((frontend.language || '').toLowerCase()) || hasDockerfile);
 
     let frontendService = '';
     if (requiresFrontendContainer) {
@@ -63,7 +78,7 @@ export class DockerAdapter implements Adapter {
     let serverDocRoot: string;
 
     if (isApache) {
-      serverImage = `httpd:${server.version || '2.4-alpine'}`;
+      serverImage = `httpd:${server.version === '1.24' ? '2.4-alpine' : (server.version || '2.4-alpine')}`;
       serverConfigFile = './server/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro';
       serverDocRoot = '/usr/local/apache2/htdocs:ro';
     } else {
@@ -72,43 +87,49 @@ export class DockerAdapter implements Adapter {
       serverDocRoot = '/usr/share/nginx/html:ro';
     }
 
-    // Si el frontend es estático, lo monta Nginx/Apache. Si es contenedor, se añade depende_de
     const serverDependsOn = ['backend'];
     if (requiresFrontendContainer) {
       serverDependsOn.push('frontend');
     }
 
+    const staticVolumeSource = requiresFrontendContainer ? './front' : (frontend?.srcDir || './front');
+
     const serverService = `
   server:
     image: ${serverImage}
-    ports:
-${server.ports.map((p) => `      - "${p}:${p}"`).join('\n')}
+    ports: ${server.ports.map((p) => `
+      - "${p}:${p}"`).join('')}
     volumes:
       - ${serverConfigFile}
-      - ./front:${serverDocRoot}
-    depends_on:
-${serverDependsOn.map((dep) => `      - ${dep}`).join('\n')}
+      - ${staticVolumeSource}:${serverDocRoot}
+    depends_on: ${serverDependsOn.map((dep) => `
+      - ${dep}`).join('')}
     networks:
       - app-network`;
 
-    // 4. Base de Datos
+    // 4. Base de Datos (Inyectamos environment explícito además del env_file)
     let databaseService = '';
     if (database) {
+      const dbEngine = database.engine.toLowerCase() === 'postgresql' ? 'postgres' : database.engine;
+      const dbNameNormalized = ast.projectName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
       databaseService = `
   database:
-    image: ${database.engine}:${database.version || 'latest'}
+    image: ${dbEngine}:${database.version || 'latest'}
     ports:
       - "${database.port || 5432}:${database.port || 5432}"
     env_file:
       - .env
+    environment:
+      POSTGRES_DB: ${dbNameNormalized}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_secure_pass
     networks:
       - app-network`;
     }
 
     const composeContent = `
 # Generado automáticamente por Mystack CLI
-version: '3.8'
-
 services:
 ${serverService}
 ${frontendService}
@@ -136,7 +157,6 @@ CMD ["node", "server.js"]
       { relativePath: 'backend/Dockerfile', content: backendDockerfile },
     ];
 
-    // Si requiere contenedor de frontend, generamos su Dockerfile básico
     if (requiresFrontendContainer) {
       files.push({
         relativePath: 'front/Dockerfile',
