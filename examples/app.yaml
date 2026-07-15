@@ -1,12 +1,14 @@
-name: mi-app-fullstack
+# Manifiesto Fullstack generado automáticamente por Mystack CLI
+name: Prueba
 version: 1.0.0
 
 server:
-  engine: nginx
+  engine: apache2
   version: "1.24"
   ports: [80, 443]
   headers:
     Referrer-Policy: strict-origin
+    X-Frame-Options: DENY
   routes:
     get:
       - path: /
@@ -19,7 +21,7 @@ server:
         handler: backend.createUser
 
 backend:
-  language: typescript
+  language: javascript
   version: "5.0"
   framework: express
   entryPoint: src/server.ts
@@ -36,3 +38,5 @@ database:
   engine: postgresql
   version: "16.0"
   port: 5432
+  schemas:
+    - ./database/init.sql
