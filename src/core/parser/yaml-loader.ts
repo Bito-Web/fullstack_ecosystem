@@ -1,5 +1,5 @@
 import fs from 'fs';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 
 export const loadYaml = (path: string): unknown => {
   const file = fs.readFileSync(path, 'utf8');
