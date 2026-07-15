@@ -7,6 +7,8 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+app.yaml
+dist/*.*
 
 # Archivos de entorno y secretos
 .env
