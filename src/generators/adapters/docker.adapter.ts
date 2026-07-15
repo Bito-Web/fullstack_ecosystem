@@ -6,9 +6,8 @@ export class DockerAdapter implements Adapter {
   public name = 'DockerAdapter';
 
   public generate(ast: UnifiedAST): GeneratedFile[] {
-    const { server, backend, database } = ast;
+    const { server, backend, frontend, database } = ast;
 
-    // 1. Crear contenido del archivo .env que se escribirá en /dist
     const envFileLines: string[] = [
       `# Generado automáticamente para ${ast.projectName}`,
       `PORT=3000`,
@@ -25,7 +24,7 @@ export class DockerAdapter implements Adapter {
 
     const envContent = envFileLines.join('\n');
 
-    // 2. Configurar servicio de Backend usando env_file
+    // 1. Servicio de Backend
     const backendService = `
   backend:
     build:
@@ -38,21 +37,61 @@ export class DockerAdapter implements Adapter {
     networks:
       - app-network`;
 
-    // 3. Configurar servicio del Servidor Web
+    // 2. Comprobar si el Frontend requiere un contenedor dinámico (React, Vue, Vite, etc.)
+    const requiresFrontendContainer = frontend && 
+      ['jsx', 'tsx', 'vue', 'react'].includes((frontend.language || '').toLowerCase());
+
+    let frontendService = '';
+    if (requiresFrontendContainer) {
+      frontendService = `
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network`;
+    }
+
+    // 3. Servidor Web (Nginx / Apache)
+    const engineLower = (server.engine || '').toLowerCase();
+    const isApache = engineLower.includes('apache') || engineLower.includes('httpd');
+
+    let serverImage: string;
+    let serverConfigFile: string;
+    let serverDocRoot: string;
+
+    if (isApache) {
+      serverImage = `httpd:${server.version || '2.4-alpine'}`;
+      serverConfigFile = './server/httpd.conf:/usr/local/apache2/conf/httpd.conf:ro';
+      serverDocRoot = '/usr/local/apache2/htdocs:ro';
+    } else {
+      serverImage = `nginx:${server.version || 'latest'}`;
+      serverConfigFile = './server/nginx.conf:/etc/nginx/nginx.conf:ro';
+      serverDocRoot = '/usr/share/nginx/html:ro';
+    }
+
+    // Si el frontend es estático, lo monta Nginx/Apache. Si es contenedor, se añade depende_de
+    const serverDependsOn = ['backend'];
+    if (requiresFrontendContainer) {
+      serverDependsOn.push('frontend');
+    }
+
     const serverService = `
   server:
-    image: ${server.engine}:${server.version || 'latest'}
+    image: ${serverImage}
     ports:
 ${server.ports.map((p) => `      - "${p}:${p}"`).join('\n')}
     volumes:
-      - ./server/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./front:/usr/share/nginx/html:ro
+      - ${serverConfigFile}
+      - ./front:${serverDocRoot}
     depends_on:
-      - backend
+${serverDependsOn.map((dep) => `      - ${dep}`).join('\n')}
     networks:
       - app-network`;
 
-    // 4. Configurar Base de Datos con envVars
+    // 4. Base de Datos
     let databaseService = '';
     if (database) {
       databaseService = `
@@ -72,6 +111,7 @@ version: '3.8'
 
 services:
 ${serverService}
+${frontendService}
 ${backendService}
 ${databaseService}
 
@@ -90,19 +130,28 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 `.trim();
 
-    return [
-      {
-        relativePath: '.env',
-        content: envContent,
-      },
-      {
-        relativePath: 'docker-compose.yml',
-        content: composeContent,
-      },
-      {
-        relativePath: 'backend/Dockerfile',
-        content: backendDockerfile,
-      },
+    const files: GeneratedFile[] = [
+      { relativePath: '.env', content: envContent },
+      { relativePath: 'docker-compose.yml', content: composeContent },
+      { relativePath: 'backend/Dockerfile', content: backendDockerfile },
     ];
+
+    // Si requiere contenedor de frontend, generamos su Dockerfile básico
+    if (requiresFrontendContainer) {
+      files.push({
+        relativePath: 'front/Dockerfile',
+        content: `
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 8080
+CMD ["npm", "run", "dev"]
+`.trim(),
+      });
+    }
+
+    return files;
   }
 }

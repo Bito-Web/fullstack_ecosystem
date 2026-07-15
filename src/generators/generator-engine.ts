@@ -3,10 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { UnifiedAST } from '../core/ast/ast-builder';
 import { Adapter } from './adapters/base.adapter';
+import { ApacheAdapter } from './adapters/apache.adapter';
 import { NginxAdapter } from './adapters/nginx.adapter';
 import { ExpressAdapter } from './adapters/express.adapter';
 import { DockerAdapter } from './adapters/docker.adapter';
-import { FrontendAdapter } from './adapters/frontend.adapter'; // <--- Importar
+import { FrontendAdapter } from './adapters/frontend.adapter';
 
 export class GeneratorEngine {
   private adapters: Adapter[] = [];
@@ -14,8 +15,9 @@ export class GeneratorEngine {
   constructor() {
     this.adapters.push(new NginxAdapter());
     this.adapters.push(new ExpressAdapter());
+    this.adapters.push(new ApacheAdapter());
     this.adapters.push(new DockerAdapter());
-    this.adapters.push(new FrontendAdapter()); // <--- Registrar
+    this.adapters.push(new FrontendAdapter());
   }
 
   public run(ast: UnifiedAST, outputDir: string): void {
