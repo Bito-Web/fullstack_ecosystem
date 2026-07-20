@@ -16,33 +16,38 @@ export class NginxAdapter implements Adapter {
     // Mapear rutas GET y POST a bloques de Nginx
     const buildLocations = () => {
       const locations: string[] = [];
+      
+      // 1. Unificamos todas las rutas en una sola lista
+      const allRoutes = [
+        ...server.routes.GET,
+        ...server.routes.POST,
+        ...(server.routes.PUT || []),
+        ...(server.routes.DELETE || [])
+      ];
 
-      // Procesar rutas GET
-      server.routes.GET.forEach((route) => {
-        if (route.type === 'include') {
-          locations.push(`
-    location = ${route.path} {
-        root /usr/share/nginx/html;
-        try_files /${route.target} =404;
-    }`);
-        } else {
-          locations.push(`
-    location = ${route.path} {
-        proxy_pass http://backend_upstream;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }`);
+      // 2. Filtramos para quedarnos solo con paths únicos usando un mapa
+      const uniqueRoutesMap = new Map<string, typeof allRoutes[number]>();
+      allRoutes.forEach(route => {
+        // Si ya existe, priorizamos el tipo 'include' si lo hubiera, o simplemente mantenemos la ruta
+        if (!uniqueRoutesMap.has(route.path)) {
+          uniqueRoutesMap.set(route.path, route);
         }
       });
 
-      // Procesar rutas POST
-      server.routes.POST.forEach((route) => {
-        locations.push(`
-    location = ${route.path} {
-        proxy_pass http://backend_upstream;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-    }`);
+      // 3. Generamos un único bloque 'location' por cada path
+      uniqueRoutesMap.forEach((route, path) => {
+        if (route.type === 'include') {
+          locations.push(`     location = ${path} {
+            root /usr/share/nginx/html;
+            try_files /${route.target} =404;
+        }`);
+        } else {
+          locations.push(`     location = ${path} {
+            proxy_pass http://backend_upstream;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }`);
+        }
       });
 
       return locations.join('\n');
