@@ -1,58 +1,11 @@
-# --- Source & Development Files ---
-src/
-assets/
-tsconfig.json
-rollup.config.js
-webpack.config.js
-vite.config.ts
-.babelrc
-
-# --- Testing & Code Quality ---
-test/
-tests/
-__tests__/
-spec/
-coverage/
-.nyc_output/
-.eslintrc*
-.prettierrc*
-.hintrc
-.editorconfig
-
-# --- CI/CD & DevOps ---
-.github/
-.gitlab-ci.yml
-.travis.yml
-circle.yml
-AppVeyor.yml
-sonar-project.properties
-
-# --- Local Environment & Local Files ---
-.env
-.env.local
-.env.development
-.env.production
-.devcontainer/
+# Excluir configuraciones locales del editor e historial
 .vscode/
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.swp
+.git/
+.github/
+dist/
 
-# --- Documentation ---
-docs/
-examples/
-samples/
-CHANGELOG.md
-CONTRIBUTING.md
-CODE_OF_CONDUCT.md
-
-# --- Package Managers ---
-# (Keep lockfiles in Git, but block them from npm registry)
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-bun.lockb
-shrinkwrap.yaml
+# Excluir logs de error locales
+*.log
+app.yaml
+npm-debug.log*
