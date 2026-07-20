@@ -9,7 +9,7 @@ export function runCLI() {
   const program = new Command();
 
   program
-    .name('mystack')
+    .name('fullstack_ecosystem')
     .description('CLI Engine para orquestar ecosistemas Fullstack unificados')
     .version('0.1.0');
 

@@ -129,7 +129,7 @@ export class DockerAdapter implements Adapter {
     }
 
     const composeContent = `
-# Generado automáticamente por Mystack CLI
+# Generado automáticamente por Fullstack_ecosystem CLI
 services:
 ${serverService}
 ${frontendService}

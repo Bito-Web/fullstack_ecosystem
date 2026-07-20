@@ -1,6 +1,6 @@
 ---
 name: 🐛 Reporte de Bug
-about: Crea un reporte para ayudarnos a corregir un error en Mystack CLI
+about: Crea un reporte para ayudarnos a corregir un error en Fullstack_ecosystem CLI
 title: '[BUG] '
 labels: 'bug'
 assignees: ''
@@ -34,4 +34,4 @@ server:
 * **Sistema Operativo:** [ej. Windows 11, macOS Sequoia, Ubuntu 24.04]
 * **Versión de Node.js:** [ej. 20.10.0]
 * **Versión de Docker:** [ej. 27.0.1]
-* **Versión de Mystack CLI:** [ej. 0.1.0]
+* **Versión de Fullstack_ecosystem CLI:** [ej. 0.1.0]

@@ -14,7 +14,7 @@ export class ApacheAdapter implements Adapter {
     }
 
     const httpdConfig = `
-# Generado automáticamente por Mystack CLI para Apache HTTPD
+# Generado automáticamente por Fullstack_ecosystem CLI para Apache HTTPD
 ServerName localhost
 ServerRoot "/usr/local/apache2"
 Listen ${server.ports[0] || 80}

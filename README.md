@@ -1,24 +1,24 @@
-# 🚀 Fullstack Ecosystem (Mystack CLI)
+# 🚀 Fullstack Ecosystem (Fullstack_ecosystem CLI)
 
 > **Un único manifiesto declarativo para orquestar tu servidor web, backend, frontend y base de datos sin fricción.**
 
-**Mystack** es un motor CLI que resuelve la fragmentación del stack de desarrollo web. En lugar de dispersar la configuración entre `nginx.conf`, `httpd.conf`, scripts de backend, archivos `Dockerfile` y mapas de rutas en el cliente, Mystack utiliza **un único archivo manifiesto (`app.yaml`) como la Única Fuente de Verdad (*Single Source of Truth*)**.
+**Fullstack_ecosystem** es un motor CLI que resuelve la fragmentación del stack de desarrollo web. En lugar de dispersar la configuración entre `nginx.conf`, `httpd.conf`, scripts de backend, archivos `Dockerfile` y mapas de rutas en el cliente, Fullstack_ecosystem utiliza **un único archivo manifiesto (`app.yaml`) como la Única Fuente de Verdad (*Single Source of Truth*)**.
 
 ---
 
 ## 🎨 Arquitectura Agnóstica a Frameworks
 
-Mystack **no te encierra en ningún framework ni librería específica**. Está diseñado para ser completamente agnóstico:
+Fullstack_ecosystem **no te encierra en ningún framework ni librería específica**. Está diseñado para ser completamente agnóstico:
 
 * **Frontend:** Puedes utilizar HTML/JS nativo, o integrar librerías y frameworks como React, Vue, Svelte, Angular, Astro o Vite en tu directorio fuente.
 * **Backend:** Soporta Node.js (Express, Fastify, NestJS), Python (FastAPI, Django), PHP, Java, Go, o cualquier runtime de tu elección.
 * **Servidor Web:** Intercambia entre Nginx, Apache (`httpd`) o proxies personalizados cambiando una sola línea en el manifiesto.
 
-> 💡 **El objetivo principal de Mystack:** Proporcionar un scaffolding base y **unificar la estructura y el entorno de desarrollo mediante un único archivo `docker-compose.yml` autogenerado**. Una vez armada la base, el desarrollador tiene libertad total para instalar cualquier librería o dependencia adicional en sus respectivos directorios.
+> 💡 **El objetivo principal de Fullstack_ecosystem:** Proporcionar un scaffolding base y **unificar la estructura y el entorno de desarrollo mediante un único archivo `docker-compose.yml` autogenerado**. Una vez armada la base, el desarrollador tiene libertad total para instalar cualquier librería o dependencia adicional en sus respectivos directorios.
 
 ---
 
-## 🎯 ¿Por qué Mystack?
+## 🎯 ¿Por qué Fullstack_ecosystem?
 
 * **Estructura Unificada:** Centraliza la infraestructura de tu proyecto en un solo lugar.
 * **Cero desacople de rutas:** Declaras un endpoint una sola vez y el CLI genera el proxy en Nginx/Apache, el handler en el Backend y la regla de seguridad correspondiente.
@@ -38,7 +38,7 @@ Mystack **no te encierra en ningún framework ni librería específica**. Está 
                                 |
                                 v
                +----------------------------------+
-               |        CLI Engine (mystack)      |
+               |        CLI Engine (fullstack_ecosystem)      |
                +----------------------------------+
                                 |
         +-----------------------+-----------------------+
@@ -70,7 +70,7 @@ Mystack **no te encierra en ningún framework ni librería específica**. Está 
 ```text
 FULLSTACK_ECOSYSTEM/
 ├── bin/
-│   └── mystack.ts            # Punto de entrada ejecutable CLI
+│   └── fullstack_ecosystem.ts            # Punto de entrada ejecutable CLI
 ├── src/
 │   ├── cli/
 │   │   ├── commands/         # Comandos (init, validate, build, dev)
@@ -206,9 +206,9 @@ npm run dev
 
 ## 🐋 Instalación de Docker Desktop (Requisito para `npm run dev`)
 
-Para que Mystack pueda orquestar tus contenedores en tiempo real durante `npm run dev`, se requiere tener **Docker Engine / Docker Desktop** disponible.
+Para que Fullstack_ecosystem pueda orquestar tus contenedores en tiempo real durante `npm run dev`, se requiere tener **Docker Engine / Docker Desktop** disponible.
 
-> ⚡ **Auto-Instalación vía Mystack CLI:** Si ejecutas `npm run dev` y el CLI detecta que Docker no está en tu sistema, te preguntará si deseas instalarlo automáticamente usando el gestor de paquetes correspondiente a tu SO (`winget`, `brew` o `curl`).
+> ⚡ **Auto-Instalación vía Fullstack_ecosystem CLI:** Si ejecutas `npm run dev` y el CLI detecta que Docker no está en tu sistema, te preguntará si deseas instalarlo automáticamente usando el gestor de paquetes correspondiente a tu SO (`winget`, `brew` o `curl`).
 
 Si prefieres instalarlo manualmente, sigue los pasos según tu sistema operativo:
 

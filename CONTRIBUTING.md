@@ -1,6 +1,6 @@
-# 🤝 Guía de Contribución a Mystack CLI
+# 🤝 Guía de Contribución a Fullstack_ecosystem CLI
 
-¡Gracias por tu interés en contribuir a **Mystack CLI**! Proyectos como este crecen gracias a la colaboración de la comunidad.
+¡Gracias por tu interés en contribuir a **Fullstack_ecosystem CLI**! Proyectos como este crecen gracias a la colaboración de la comunidad.
 
 ---
 

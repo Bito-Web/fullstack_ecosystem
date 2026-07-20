@@ -50,7 +50,7 @@ export class NginxAdapter implements Adapter {
 
     // Plantilla del nginx.conf
     const nginxConfig = `
-# Generado automáticamente por Mystack CLI
+# Generado automáticamente por Fullstack_ecosystem CLI
 events {
     worker_connections 1024;
 }

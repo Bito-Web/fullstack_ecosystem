@@ -1,6 +1,6 @@
 # 🛡️ Política de Seguridad
 
-En **Mystack CLI** nos tomamos muy en serio la seguridad de los desarrolladores y de las aplicaciones que se orquestan mediante nuestro motor.
+En **Fullstack_ecosystem CLI** nos tomamos muy en serio la seguridad de los desarrolladores y de las aplicaciones que se orquestan mediante nuestro motor.
 
 ---
 
@@ -33,4 +33,4 @@ Si descubres una vulnerabilidad de seguridad (fugas de secretos en `.env`, inyec
 * **Evaluación:** Analizaremos el impacto y la validez de la vulnerabilidad en un plazo de **5 días hábiles**.
 * **Corrección:** Si la vulnerabilidad se confirma, lanzaremos un parche en una versión menor/parche e informaremos en las notas de la versión.
 
-Agradecemos de antemano tu contribución para mantener seguro el ecosistema Mystack.
+Agradecemos de antemano tu contribución para mantener seguro el ecosistema Fullstack_ecosystem.

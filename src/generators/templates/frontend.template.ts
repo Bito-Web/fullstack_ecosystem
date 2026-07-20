@@ -54,7 +54,7 @@ export function generateHomeHtml(projectName: string): string {
 <body>
   <div class="card">
     <h1>🚀 ${projectName}</h1>
-    <p>Generado unificadamente con <strong>Mystack CLI</strong>.</p>
+    <p>Generado unificadamente con <strong>Fullstack_ecosystem CLI</strong>.</p>
     <button onclick="fetchUsers()">Probar Endpoint /api/v1/users</button>
     <div id="response">// La respuesta del backend aparecerá aquí...</div>
   </div>

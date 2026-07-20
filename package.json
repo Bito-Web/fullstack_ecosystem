@@ -4,15 +4,15 @@
   "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
   "main": "dist/src/cli/index.js",
   "bin": {
-    "mystack": "./bin/mystack.ts"
+    "fullstack_ecosystem": "bin/fullstack_ecosystem.ts"
   },
   "scripts": {
     "build:cli": "tsc",
-    "mystack": "ts-node bin/mystack.ts",
-    "init": "ts-node bin/mystack.ts init",
-    "validate": "ts-node bin/mystack.ts validate app.yaml",
-    "build": "ts-node bin/mystack.ts build app.yaml",
-    "dev": "ts-node bin/mystack.ts dev app.yaml"
+    "fullstack_ecosystem": "ts-node bin/fullstack_ecosystem.ts",
+    "init": "ts-node bin/fullstack_ecosystem.ts init",
+    "validate": "ts-node bin/fullstack_ecosystem.ts validate app.yaml",
+    "build": "ts-node bin/fullstack_ecosystem.ts build app.yaml",
+    "dev": "ts-node bin/fullstack_ecosystem.ts dev app.yaml"
   },
   "keywords": [
     "cli",

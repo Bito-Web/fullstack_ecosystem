@@ -18,7 +18,7 @@ function askQuestion(query: string): Promise<string> {
 }
 
 export async function initCommand() {
-  console.log('🚀 --- Inicializador Interactivo de Mystack ---');
+  console.log('🚀 --- Inicializador Interactivo de Fullstack_ecosystem ---');
   console.log('Responde las siguientes preguntas para generar tu manifiesto app.yaml:\n');
 
   // 1. Preguntas interactivas con valores por defecto
@@ -44,7 +44,7 @@ export async function initCommand() {
 
   // 2. Plantilla YAML auto-generada
   const yamlContent = `
-# Manifiesto Fullstack generado automáticamente por Mystack CLI
+# Manifiesto Fullstack generado automáticamente por Fullstack_ecosystem CLI
 name: ${projectName}
 version: 1.0.0
 

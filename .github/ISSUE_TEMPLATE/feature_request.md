@@ -1,6 +1,6 @@
 ---
 name: ✨ Solicitud de Funcionalidad
-about: Sugiere una idea o nuevo adaptador para Mystack CLI
+about: Sugiere una idea o nuevo adaptador para Fullstack_ecosystem CLI
 title: '[FEAT] '
 labels: 'enhancement'
 assignees: ''

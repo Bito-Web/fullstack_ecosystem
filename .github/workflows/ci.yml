@@ -31,7 +31,7 @@ jobs:
         run: npm run build:cli
 
       - name: 🧪 Validar Manifiesto de Prueba (`validate`)
-        run: npx ts-node bin/mystack.ts validate examples/app.yaml
+        run: npx ts-node bin/fullstack_ecosystem.ts validate examples/app.yaml
 
       - name: 🔨 Probar Compilación a carpeta `/dist` (`build`)
-        run: npx ts-node bin/mystack.ts build examples/app.yaml
+        run: npx ts-node bin/fullstack_ecosystem.ts build examples/app.yaml

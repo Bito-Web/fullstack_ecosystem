@@ -15,7 +15,7 @@ export class ExpressAdapter implements Adapter {
 
     // 1. Plantilla para el Middleware de Autenticación
     const authMiddlewareCode = `
-// Middleware de Autenticación auto-generado por Mystack CLI
+// Middleware de Autenticación auto-generado por Fullstack_ecosystem CLI
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   
@@ -78,7 +78,7 @@ app.post('${route.path}', ${middleware}(req, res) => {
 
     // 3. Generar el código principal del servidor Express
     const serverJsContent = `
-// Generado automáticamente por Mystack CLI
+// Generado automáticamente por Fullstack_ecosystem CLI
 const express = require('express');
 const app = express();
 
