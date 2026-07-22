@@ -1,6 +1,6 @@
 {
-  "name": "fullstack-ecosystem",
-  "version": "0.1.2",
+  "name": "@jorge.torrelles/fullstack-ecosystem",
+  "version": "1.0.0",
   "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
   "main": "dist/src/cli/index.js",
   "bin": {
