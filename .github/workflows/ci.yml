@@ -1,4 +1,4 @@
-name: CI (Integration & Build Check)
+name: CI & Publish
 
 on:
   push:
@@ -7,12 +7,13 @@ on:
     branches: [ main, master ]
 
 jobs:
+  # 1. Job de Integración Continua (Pruebas y Build)
   build-and-test:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [20.x, 22.x, 24.x]
 
     steps:
       - name: 📥 Clonar Repositorio
@@ -35,3 +36,34 @@ jobs:
 
       - name: 🔨 Probar Compilación a carpeta `/dist` (`build`)
         run: npx ts-node bin/fullstack_ecosystem.ts build examples/app.yaml
+
+  # 2. Job de Publicación a npmjs (Solo se ejecuta en 'main' o 'master' si pasan los tests)
+  publish-to-npm:
+    needs: build-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    environment: npmjs
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: 📥 Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: 📦 Instalar Dependencias
+        run: npm ci
+
+      - name: 🏗️ Compilar Proyecto
+        run: npm run build:cli
+
+      - name: 🚀 Publicar en npmjs (@jorge.torrelles/fullstack-ecosystem)
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
