@@ -1,17 +1,30 @@
 {
-  "name": "@jorge.torrelles/fullstack-ecosystem",
-  "version": "1.0.1",
+  "name": "erp_system",
+  "version": "1.0.2",
+  "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
+  "keywords": [
+    "cli",
+    "fullstack",
+    "orchestrator",
+    "yaml"
+  ],
+  "homepage": "https://github.com/Bito-Web/fullstack_ecosystem#readme",
+  "bugs": {
+    "url": "https://github.com/Bito-Web/fullstack_ecosystem/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Bito-Web/fullstack_ecosystem.git"
   },
-  "publishConfig": {
-    "access": "public"
-  },
-  "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
+  "license": "MIT",
+  "author": "jorge torrelles",
+  "type": "commonjs",
   "main": "dist/src/cli/index.js",
   "bin": {
     "fullstack_ecosystem": "bin/fullstack_ecosystem.ts"
+  },
+  "directories": {
+    "example": "examples"
   },
   "scripts": {
     "build:cli": "tsc",
@@ -21,14 +34,6 @@
     "build": "ts-node bin/fullstack_ecosystem.ts build app.yaml",
     "dev": "ts-node bin/fullstack_ecosystem.ts dev app.yaml"
   },
-  "keywords": [
-    "cli",
-    "fullstack",
-    "orchestrator",
-    "yaml"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "commander": "^12.0.0",
     "yaml": "^2.9.0",
@@ -38,5 +43,8 @@
     "@types/node": "^20.19.43",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
