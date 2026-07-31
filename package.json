@@ -1,6 +1,6 @@
 {
   "name": "@jorge.torrelles/fullstack_ecosystem",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Engine CLI para orquestar ecosistemas Fullstack unificados",
   "keywords": [
     "cli",
