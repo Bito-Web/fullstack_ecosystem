@@ -1,4 +1,3 @@
-// src/generators/adapters/nginx.adapter.ts
 import { Adapter, GeneratedFile } from './base.adapter';
 import { UnifiedAST } from '../../core/ast/ast-builder';
 
@@ -6,54 +5,16 @@ export class NginxAdapter implements Adapter {
   public name = 'NginxAdapter';
 
   public generate(ast: UnifiedAST): GeneratedFile[] {
-    const { server, backend } = ast;
+    const { server } = ast;
+    const engineLower = (server.engine || '').toLowerCase();
+    if (!engineLower.includes('nginx')) {
+      return [];
+    }
 
-    // Convertir headers a formato Nginx
-    const customHeaders = Object.entries(server.headers)
+    const customHeaders = Object.entries(server.headers || {})
       .map(([key, value]) => `        add_header ${key} "${value}";`)
       .join('\n');
 
-    // Mapear rutas GET y POST a bloques de Nginx
-    const buildLocations = () => {
-      const locations: string[] = [];
-      
-      // 1. Unificamos todas las rutas en una sola lista
-      const allRoutes = [
-        ...server.routes.GET,
-        ...server.routes.POST,
-        ...(server.routes.PUT || []),
-        ...(server.routes.DELETE || [])
-      ];
-
-      // 2. Filtramos para quedarnos solo con paths únicos usando un mapa
-      const uniqueRoutesMap = new Map<string, typeof allRoutes[number]>();
-      allRoutes.forEach(route => {
-        // Si ya existe, priorizamos el tipo 'include' si lo hubiera, o simplemente mantenemos la ruta
-        if (!uniqueRoutesMap.has(route.path)) {
-          uniqueRoutesMap.set(route.path, route);
-        }
-      });
-
-      // 3. Generamos un único bloque 'location' por cada path
-      uniqueRoutesMap.forEach((route, path) => {
-        if (route.type === 'include') {
-          locations.push(`     location = ${path} {
-            root /usr/share/nginx/html;
-            try_files /${route.target} =404;
-        }`);
-        } else {
-          locations.push(`     location = ${path} {
-            proxy_pass http://backend_upstream;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-        }`);
-        }
-      });
-
-      return locations.join('\n');
-    };
-
-    // Plantilla del nginx.conf
     const nginxConfig = `
 # Generado automáticamente por Fullstack_ecosystem CLI
 events {
@@ -65,18 +26,28 @@ http {
     default_type  application/octet-stream;
 
     upstream backend_upstream {
-        server localhost:3000; # Puerto por defecto del backend
+        server backend:3000; # Red interna de Docker
     }
 
     server {
         listen ${server.ports[0] || 80};
         server_name localhost;
 
-        # Cabeceras globales de seguridad
         ${customHeaders}
 
-        # Rutas dinámicas y estáticas declaradas
-        ${buildLocations()}
+        location / {
+            root /usr/share/nginx/html;
+            try_files $uri $uri/ /index.html /home.html =404;
+        }
+
+        # Proxy dinámico para todas las rutas de la API
+        location /api/v1/ {
+            proxy_pass http://backend_upstream;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
     }
 }
 `.trim();

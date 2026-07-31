@@ -20,6 +20,9 @@ export class DockerAdapter implements Adapter {
       envFileLines.push(`${k}=${v}`);
     });
 
+    envFileLines.push(`DOMAIN_NAME=localhost`);
+    envFileLines.push(`ADMIN_EMAIL=admin@localhost.local`);
+
     // Inyectar variables de la Base de Datos al .env ANTES de generar envContent
     if (database) {
       envFileLines.push(`DB_NAME=${ast.projectName.toLowerCase().replace(/[^a-z0-9]/g, '_')}`);
@@ -61,7 +64,7 @@ export class DockerAdapter implements Adapter {
       frontendService = `
   frontend:
     build:
-      context: ./front
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
@@ -92,7 +95,8 @@ export class DockerAdapter implements Adapter {
       serverDependsOn.push('frontend');
     }
 
-    const staticVolumeSource = requiresFrontendContainer ? './front' : (frontend?.srcDir || './front');
+
+    const staticVolumeSource = './frontend'; // Apuntar siempre a la carpeta relativa en dist/
 
     const serverService = `
   server:
@@ -102,6 +106,7 @@ export class DockerAdapter implements Adapter {
     volumes:
       - ${serverConfigFile}
       - ${staticVolumeSource}:${serverDocRoot}
+      - ./server/certs:/etc/ssl/custom:ro
     depends_on: ${serverDependsOn.map((dep) => `
       - ${dep}`).join('')}
     networks:

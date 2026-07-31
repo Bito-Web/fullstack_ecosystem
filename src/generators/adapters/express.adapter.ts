@@ -32,7 +32,6 @@ const authMiddleware = (req, res, next) => {
       error: 'Acceso prohibido: Token inválido o expirado' 
     });
   }
-
   next();
 };
 `.trim();

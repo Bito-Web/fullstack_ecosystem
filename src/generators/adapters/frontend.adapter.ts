@@ -15,7 +15,7 @@ export class FrontendAdapter implements Adapter {
 
     return [
       {
-        relativePath: 'front/home.html',
+        relativePath: 'frontend/index.html',
         content: homeHtml,
       },
     ];
