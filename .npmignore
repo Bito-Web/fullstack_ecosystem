@@ -1,11 +1,13 @@
-# Excluir configuraciones locales del editor e historial
+# Excluir secretos y entornos
+.env
+.ENV
+*.local
+
+# Excluir fuentes y certificados
+src/
+server/certs/
+dist/server/certs/
+node_modules/
 .vscode/
 .idea/
-.git/
-.github/
-dist/
-
-# Excluir logs de error locales
 *.log
-app.yaml
-npm-debug.log*
